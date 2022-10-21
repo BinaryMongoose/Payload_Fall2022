@@ -3,9 +3,10 @@
 #include <SPI.h>
 #include <SD.h>
 
+
 File data;
 
-int const RGB_PINS[3] = { 4, 3, 2 };
+int const RGB_PINS[3] = { 2, 3, 4 };
 
 int Colors[5] = { WHITE, RED, BLUE, GREEN, RED };
 
@@ -19,6 +20,7 @@ void setup() {
 
   if(!SD.begin(4)){
     Serial.println("Initialization  failed! Try turning me on and off.");
+    RGB_Light(RGB_PINS, RED);
     while(1);
   }
 
@@ -47,5 +49,5 @@ void setup() {
 }
 
 void loop() {
-  Flash(RGB_PINS, WHITE);
+  
 }
