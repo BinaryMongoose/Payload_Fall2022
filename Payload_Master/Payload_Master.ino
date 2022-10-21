@@ -66,9 +66,17 @@ void setup() {
 }
 
 void loop() {
+  if (! bmp.performReading()) {
+    Serial.println("Failed to perform reading :(");
+    return;
+  }
+
+  
   RGB_Light(RGB_PINS, GREEN);
 
   Serial.print("Temperature = ");
   Serial.print(bmp.temperature);
   Serial.println(" *C");
+
+  delay(2000);
 }
