@@ -8,12 +8,15 @@
 #include <Adafruit_Sensor.h>
 #include "Adafruit_BMP3XX.h"
 
+#include "Adafruit_SHT31.h"
+
 File data;
 
 int const RGB_PINS[3] = { 2, 3, 4 };
 
 int Colors[5] = { WHITE, RED, BLUE, GREEN, RED };
 
+Adafruit_SHT31 sht31 = Adafruit_SHT31();
 Adafruit_BMP3XX bmp;
 
 void setup() {
@@ -25,7 +28,13 @@ void setup() {
   }
 
   if (!bmp.begin_I2C(0x77)) {   // hardware I2C mode, can pass in address & alt Wire
-    Serial.println("Could not find a valid BMP3 sensor, check wiring!");
+    Serial.println("Can't find BMP388!");
+    while (1);
+  }
+
+  if (! sht31.begin(0x44)) {   // Set to 0x45 for alternate i2c addr
+    Serial.println("Can't find SHT31!");
+    RGB_Light(RGB_PINS, RED);
     while (1);
   }
 
@@ -39,7 +48,7 @@ void setup() {
 
   data = SD.open("data.txt", FILE_WRITE);
 
-    // if the file opened okay, write to it:
+  // if the file opened okay, write to it:
 
   if (data) {
     Serial.print("Writing to data.txt...");
@@ -71,11 +80,16 @@ void loop() {
     return;
   }
 
-  
   RGB_Light(RGB_PINS, GREEN);
 
-  Serial.print("Temperature = ");
+  Serial.print("BMP Temperature = ");
   Serial.print(bmp.temperature);
+  Serial.print(" *C");
+
+  Serial.print("/t/t");
+
+  Serial.print("SHT31 Temperature = ");
+  Serial.print(sht31.readTemperature());
   Serial.println(" *C");
 
   delay(2000);
