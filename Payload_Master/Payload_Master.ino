@@ -29,6 +29,7 @@ void setup() {
 
   if (!bmp.begin_I2C(0x77)) {   // hardware I2C mode, can pass in address & alt Wire
     Serial.println("Can't find BMP388!");
+    RGB_Light(RGB_PINS, RED);
     while (1);
   }
 
@@ -86,7 +87,7 @@ void loop() {
   Serial.print(bmp.temperature);
   Serial.print(" *C");
 
-  Serial.print("/t/t");
+  Serial.print("\t\t");
 
   Serial.print("SHT31 Temperature = ");
   Serial.print(sht31.readTemperature());
