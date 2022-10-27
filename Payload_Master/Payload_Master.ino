@@ -1,3 +1,10 @@
+/***************************
+*
+* The Main code 
+*
+***************************/
+
+// Move this to a seperate header file.
 #include "RGB.h"
 #include "colors.h"
 #include <SPI.h>
@@ -10,22 +17,28 @@
 
 #include "Adafruit_SHT31.h"
 
+
+
 File data;
 
 int const RGB_PINS[3] = { 2, 3, 4 };
 
-int Colors[5] = { WHITE, RED, BLUE, GREEN, RED };
-
-Adafruit_SHT31 sht31 = Adafruit_SHT31();
+// Set up the sensors
+Adafruit_SHT31  sht31 = Adafruit_SHT31();
 Adafruit_BMP3XX bmp;
 
 void setup() {
   // Setting up Serial
   Serial.begin(115200);
 
+  // TAKE THIS OUT!!!!!!!
   while (!Serial) {
     ; // Wait for Serial port to connect
   }
+
+  /**************************************************************************************
+  * You need to move both the BMP and SHT sensor setup to a differnt cpp file.
+  **************************************************************************************/
 
   if (!bmp.begin_I2C(0x77)) {   // hardware I2C mode, can pass in address & alt Wire
     Serial.println("Can't find BMP388!");
@@ -39,6 +52,8 @@ void setup() {
     while (1);
   }
 
+
+  // Move this to a differnt file
   if(!SD.begin(4)){
     Serial.println("Initialization  failed! Try turning me on and off.");
     RGB_Light(RGB_PINS, RED);

@@ -1,3 +1,10 @@
+/************************************
+* RGB header file
+* 
+* To be completely honest, I have no
+* idea how this works.
+************************************/
+
 #ifndef RGB
 #define RGB
 
