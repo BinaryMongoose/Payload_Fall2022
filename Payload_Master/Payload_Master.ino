@@ -10,6 +10,7 @@
 #include <SPI.h>
 #include <SD.h>
 
+
 #include <Wire.h>
 #include <SPI.h>
 #include <Adafruit_Sensor.h>
@@ -27,11 +28,21 @@ int const RGB_PINS[3] = { 2, 3, 4 };
 Adafruit_SHT31  sht31 = Adafruit_SHT31();
 Adafruit_BMP3XX bmp;
 
+File currentFile;
+
+int const RGB_PINS[3] = { 2, 3, 4 };
+
+unsigned long previousMillis = 0;
+
+int ledState = LOW;
+
+const long interval = 1000;  // interval at which to blink (milliseconds)
+
+
 void setup() {
   // Setting up Serial
   Serial.begin(115200);
 
-  // TAKE THIS OUT!!!!!!!
   while (!Serial) {
     ; // Wait for Serial port to connect
   }
@@ -62,7 +73,8 @@ void setup() {
 
   Serial.println("initialization done. (I did what I was supposed to!)");
 
-  data = SD.open("data.txt", FILE_WRITE);
+  currentFile = SD.open("data.txt", FILE_WRITE);
+
 
   // if the file opened okay, write to it:
 
@@ -73,9 +85,13 @@ void setup() {
     // close the file:
     data.close();
     Serial.println("Done writing. ");
+
+  if (currentFile) {
+    Serial.println("Data is open.");
   } else {
     // if the file didn't open, print an error:
     Serial.println("Error opening data.txt");
+    
   }
 
   // Setting up the RGD LED pins.
@@ -90,6 +106,7 @@ void setup() {
   bmp.setOutputDataRate(BMP3_ODR_50_HZ);
 }
 
+int currentFileNum = 1;
 void loop() {
   if (! bmp.performReading()) {
     Serial.println("Failed to perform reading :(");
@@ -109,4 +126,24 @@ void loop() {
   Serial.println(" *C");
 
   delay(2000);
+  unsigned long currentMillis = millis();
+
+  if (SD.begin(4)) {
+    if (currentMillis - previousMillis >= interval) {
+      // save the last time you blinked the LED
+      previousMillis = currentMillis;
+
+      currentFile.close();
+      Serial.println("data file is closed.");
+
+      currentFile = SD.open("data_" + String(currentFileNum) + ".txt", FILE_WRITE);
+      Serial.println("data is open.");
+
+      currentFile.println(currentMillis/1000);
+      Serial.println(currentMillis/1000);
+      currentFileNum += 1;
+    }
+  } else {
+    Serial.println("Put the SD card in!");
+  }
 }
