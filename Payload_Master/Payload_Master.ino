@@ -5,7 +5,7 @@
 
 File data;
 
-int const RGB_PINS[3] = { 4, 3, 2 };
+int const RGB_PINS[3] = { 2, 3, 4 };
 
 int Colors[5] = { WHITE, RED, BLUE, GREEN, RED };
 
@@ -19,7 +19,7 @@ void setup() {
 
   if(!SD.begin(4)){
     Serial.println("Initialization  failed! Try turning me on and off.");
-    while(1);
+    RGB_Light(RGB_PINS, RED);
   }
 
   Serial.println("initialization done. (I did what I was supposed to!)");
@@ -47,5 +47,9 @@ void setup() {
 }
 
 void loop() {
-  Flash(RGB_PINS, WHITE);
+  if(data){
+    RGB_Light(RGB_PINS, GREEN);
+  } else {
+    RGB_Light(RGB_PINS, RED);
+  }
 }
