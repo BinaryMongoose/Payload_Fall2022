@@ -17,6 +17,8 @@ void setup() {
   // Setting up Serial
   Serial.begin(9600);
 
+
+
   while (!Serial) {
     ; // Wait for Serial port to connect
   }
@@ -66,4 +68,5 @@ void loop() {
   } else {
     Serial.println("Put the SD card in!");
   }
+
 }
