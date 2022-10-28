@@ -1,3 +1,9 @@
+/***********************************************
+* Functions for RGB LED
+*
+* Flash is out of date, needs to be upgraded. 
+***********************************************/
+
 #include "RGB.h"
 
 int d = 200;
