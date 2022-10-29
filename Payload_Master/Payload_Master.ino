@@ -15,14 +15,7 @@
 #include <SPI.h>
 #include <Adafruit_Sensor.h>
 #include "Adafruit_BMP3XX.h"
-
 #include "Adafruit_SHT31.h"
-
-
-
-File data;
-
-int const RGB_PINS[3] = { 2, 3, 4 };
 
 // Set up the sensors
 Adafruit_SHT31  sht31 = Adafruit_SHT31();
@@ -30,14 +23,11 @@ Adafruit_BMP3XX bmp;
 
 File currentFile;
 
-int const RGB_PINS[3] = { 2, 3, 4 };
+int const RGB_PINS[3] = {2, 3, 4};
 
 unsigned long previousMillis = 0;
 
-int ledState = LOW;
-
-const long interval = 1000;  // interval at which to blink (milliseconds)
-
+const long interval = 300000;  // interval at which to blink (milliseconds)
 
 void setup() {
   // Setting up Serial
@@ -57,14 +47,13 @@ void setup() {
     while (1);
   }
 
-  if (! sht31.begin(0x44)) {   // Set to 0x45 for alternate i2c addr
+  if (!sht31.begin(0x44)) {   
     Serial.println("Can't find SHT31!");
     RGB_Light(RGB_PINS, RED);
     while (1);
   }
 
-
-  // Move this to a differnt file
+  // Move this to a different file
   if(!SD.begin(4)){
     Serial.println("Initialization  failed! Try turning me on and off.");
     RGB_Light(RGB_PINS, RED);
@@ -75,24 +64,13 @@ void setup() {
 
   currentFile = SD.open("data.txt", FILE_WRITE);
 
-
-  // if the file opened okay, write to it:
-
-  if (data) {
-    Serial.print("Writing to data.txt...");
-    data.println("Hey! Listen!");
-
-    // close the file:
-    data.close();
-    Serial.println("Done writing. ");
-
   if (currentFile) {
     Serial.println("Data is open.");
   } else {
     // if the file didn't open, print an error:
     Serial.println("Error opening data.txt");
-    
-  }
+
+  } 
 
   // Setting up the RGD LED pins.
   for (int i = 0; i < 3; i++) {
@@ -108,29 +86,42 @@ void setup() {
 
 int currentFileNum = 1;
 void loop() {
-  if (! bmp.performReading()) {
-    Serial.println("Failed to perform reading :(");
-    return;
-  }
+  unsigned long currentMillis = millis();
 
-  RGB_Light(RGB_PINS, GREEN);
-
+  bmp.performReading();
+  
+  // Serial printing
   Serial.print("BMP Temperature = ");
   Serial.print(bmp.temperature);
+  Serial.print("\t");
+  Serial.print("BMP Altitude = ");
+  Serial.print(bmp.readAltitude(1013.25));
   Serial.print(" *C");
 
   Serial.print("\t\t");
 
   Serial.print("SHT31 Temperature = ");
   Serial.print(sht31.readTemperature());
+  Serial.print("\t");
+  Serial.print("SHT31 Humidity = ");
+  Serial.print(sht31.readHumidity());
   Serial.println(" *C");
 
-  delay(2000);
-  unsigned long currentMillis = millis();
+  // Current file printing
+  currentFile.print(currentMillis);
+  currentFile.print(",");
+  currentFile.print(bmp.temperature);
+  currentFile.print(",");
+  currentFile.print(bmp.readAltitude(1013.25));
+  currentFile.print(",");
+  currentFile.println(sht31.readTemperature());
+  currentFile.print(",");
+  currentFile.print(sht31.readHumidity());
+
 
   if (SD.begin(4)) {
     if (currentMillis - previousMillis >= interval) {
-      // save the last time you blinked the LED
+      // save the last time we created a file.
       previousMillis = currentMillis;
 
       currentFile.close();
@@ -139,11 +130,15 @@ void loop() {
       currentFile = SD.open("data_" + String(currentFileNum) + ".txt", FILE_WRITE);
       Serial.println("data is open.");
 
-      currentFile.println(currentMillis/1000);
-      Serial.println(currentMillis/1000);
-      currentFileNum += 1;
+      currentFile.println("time,bmp_tmp,bmp_alt,sht_tmp,sht_hum");
+      Serial.println(currentMillis/300000);
     }
   } else {
     Serial.println("Put the SD card in!");
+    RGB_Light(RGB_PINS, YELLOW);
   }
+  
+  RGB_Light(RGB_PINS, GREEN);
+  delay(5000);
+  RGB_Light(RGB_PINS, GREEN);
 }
