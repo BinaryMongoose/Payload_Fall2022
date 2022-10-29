@@ -1,7 +1,7 @@
 /***********************************************
-* Functions for RGB LED
-*
-* Flash is out of date, needs to be upgraded. 
+ Functions for RGB LED
+
+ Flash is out of date, needs to be upgraded. 
 ***********************************************/
 
 #include "RGB.h"

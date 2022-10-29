@@ -1,8 +1,8 @@
 /************************************
-* RGB header file
-* 
-* To be completely honest, I have no
-* idea how this works.
+ RGB header file
+ 
+ To be completely honest, I have no
+ idea how this works.
 ************************************/
 
 #ifndef RGB
