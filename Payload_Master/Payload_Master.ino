@@ -33,20 +33,18 @@ unsigned long previousMillis = 0;
 const long SECOND       = 1000;
 const long FIVE_SECONDS = SECOND*5;
 const long TEN_SECONDS  = SECOND*10;
-const long MINUTE       = SECOND*6; 
+const long MINUTE       = SECOND*60; 
 const long FIVE_MINUTES = MINUTE*5;
 
 
-const long fileInterval = TEN_SECONDS;  // fileInterval at which to create a new file
+const long fileInterval = FIVE_MINUTES;  // fileInterval at which to create a new file
+long currentFileNum = 1;
 
 void setup() {
   // Setting up Serial
   Serial.begin(115200);
 
-  while (!Serial) {
-    ; // Wait for Serial port to connect
-  }
-
+  Serial.println();
   Serial.println("**********************");
   Serial.println();
 
@@ -73,9 +71,9 @@ void setup() {
     while(1);
   }
 
-  Serial.println("initialization done. (I did what I was supposed to!)");
+  Serial.println("SD initialization done. (I did what I was supposed to!)");
 
-  currentFile = SD.open("data_0.txt", FILE_WRITE);
+  currentFile = SD.open("data_0.csv", FILE_WRITE);
 
   if (currentFile) {
     Serial.println("Data is open.");
@@ -96,50 +94,24 @@ void setup() {
   bmp.setOutputDataRate(BMP3_ODR_50_HZ);
 }
 
-int currentFileNum = 1;
 void loop() {
   unsigned long currentMillis = millis();
   if(!bmp.performReading()){
     RGB_Light(RGB_PINS, BLUE);
   }
   
-  Log_Serial(currentMillis);
+  //Log_Serial(currentMillis);
+  Log_SD(currentMillis);
 
-  // Current file printing
-  currentFile.print(currentMillis/1000);
-  currentFile.print(",");
-  currentFile.print(bmp.temperature);
-  currentFile.print(",");
-  currentFile.print(bmp.readAltitude(1013.25));
-  currentFile.print(",");
-  currentFile.print(sht31.readTemperature());
-  currentFile.print(",");
-  currentFile.println(sht31.readHumidity());
-
-
-  if (SD.begin(4)) {
     if (currentMillis - previousMillis >= fileInterval) {
-      // save the last time we created a file.
-      previousMillis = currentMillis;
-
-      currentFile.close();
-      Serial.println("data file is closed.");
-
-      currentFile = SD.open("data_" + String(currentFileNum) + ".txt", FILE_WRITE);
-      Serial.println("data is open.");
-
-      currentFile.println("time,bmp_tmp,bmp_alt,sht_tmp,sht_hum");
-
-      currentFileNum += 1; // THis is important! Increments the file number.
+      Create_File(currentMillis);
     }
-  } else {
-    Serial.println("Put the SD card in!");
-    RGB_Light(RGB_PINS, ORANGE);
-  }
-  
+
   RGB_Light(RGB_PINS, GREEN);
   delay(FIVE_SECONDS);
   RGB_Light(RGB_PINS, GREEN);
+
+  Serial.println(String(currentFileNum));
 }
 
 void Log_Serial(long currentMillis){
@@ -153,4 +125,26 @@ void Log_Serial(long currentMillis){
   Serial.print(sht31.readTemperature());
   Serial.print(",");
   Serial.println(sht31.readHumidity());
+}
+
+void Log_SD(long currentMillis){
+    // Current file printing
+  currentFile.print(currentMillis/1000);
+  currentFile.print(",");
+  currentFile.print(bmp.temperature);
+  currentFile.print(",");
+  currentFile.print(bmp.readAltitude(1013.25));
+  currentFile.print(",");
+  currentFile.print(sht31.readTemperature());
+  currentFile.print(",");
+  currentFile.println(sht31.readHumidity());
+}
+
+void Create_File(long currentMillis){
+    // save the last time we created a file.
+    previousMillis = currentMillis;
+    currentFile.close();
+    currentFile = SD.open("data_" + String(currentFileNum) + ".csv", FILE_WRITE);
+    currentFile.println("time,bmp_tmp,bmp_alt,sht_tmp,sht_hum");
+    currentFileNum += 1; // THis is important! Increments the file number.
 }
