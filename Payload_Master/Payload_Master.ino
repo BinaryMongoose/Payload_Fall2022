@@ -2,22 +2,11 @@
 
  The Main code 
 
- About 150 reading per file
+ About 60 readings per file
 
 ***************************/
 
-// Move this to a seperate header file.
-#include "RGB.h"
-#include "colors.h"
-#include <SPI.h>
-#include <SD.h>
-
-
-#include <Wire.h>
-#include <SPI.h>
-#include <Adafruit_Sensor.h>
-#include "Adafruit_BMP3XX.h"
-#include "Adafruit_SHT31.h"
+#include "Payload_Master.h"
 
 // Set up the sensors
 Adafruit_SHT31  sht31 = Adafruit_SHT31();
@@ -29,16 +18,15 @@ int const RGB_PINS[3] = {2, 3, 4};
 
 unsigned long previousMillis = 0;
 
+const int SECOND       = 1000;
+const int FIVE_SECONDS = SECOND * 5;
+const int TEN_SECONDS  = SECOND * 10;
+const int MINUTE       = SECOND * 60; 
+const int FIVE_MINUTES = MINUTE * 5;
 
-const long SECOND       = 1000;
-const long FIVE_SECONDS = SECOND*5;
-const long TEN_SECONDS  = SECOND*10;
-const long MINUTE       = SECOND*60; 
-const long FIVE_MINUTES = MINUTE*5;
 
-
-const long fileInterval = FIVE_MINUTES;  // fileInterval at which to create a new file
-long currentFileNum = 1;
+const int fileInterval = MINUTE;  // fileInterval at which to create a new file
+int currentFileNum = FIVE_MINUTES;
 
 void setup() {
   // Setting up Serial
@@ -97,7 +85,7 @@ void setup() {
 void loop() {
   unsigned long currentMillis = millis();
   if(!bmp.performReading()){
-    RGB_Light(RGB_PINS, BLUE);
+    RGB_Light(RGB_PINS, RED);
   }
   
   //Log_Serial(currentMillis);
@@ -108,7 +96,7 @@ void loop() {
     }
 
   RGB_Light(RGB_PINS, GREEN);
-  delay(FIVE_SECONDS);
+  delay(FIVE_SECONDS); // Change this to 5 sec
   RGB_Light(RGB_PINS, GREEN);
 
   Serial.println(String(currentFileNum));
@@ -116,14 +104,14 @@ void loop() {
 
 void Log_Serial(long currentMillis){
   // Serial printing
-  Serial.print(currentMillis/1000);
-  Serial.print(",");
+  //Serial.print(currentMillis/1000);
+  Serial.print(F(","));
   Serial.print(bmp.temperature);
-  Serial.print(",");
+  Serial.print(F(","));
   Serial.print(bmp.readAltitude(1013.25));
-  Serial.print(",");
+  Serial.print(F(","));
   Serial.print(sht31.readTemperature());
-  Serial.print(",");
+  Serial.print(F(","));
   Serial.println(sht31.readHumidity());
 }
 
