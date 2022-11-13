@@ -1,9 +1,7 @@
 /***************************
-
  The Main code 
 
  About 60 readings per file
-
 ***************************/
 
 #include "Payload_Master.h"
@@ -20,7 +18,6 @@ unsigned long previousMillis = 0;
 
 const int SECOND       = 1000;
 const int FIVE_SECONDS = SECOND * 5;
-const int TEN_SECONDS  = SECOND * 10;
 const int MINUTE       = SECOND * 60; 
 const int FIVE_MINUTES = MINUTE * 5;
 
@@ -32,22 +29,18 @@ void setup() {
   // Setting up Serial
   Serial.begin(115200);
 
-  Serial.println();
-  Serial.println("**********************");
-  Serial.println();
-
   /**************************************************************************************
   * You need to move both the BMP and SHT sensor setup to a differnt cpp file.
   **************************************************************************************/
 
   if (!bmp.begin_I2C(0x77)) {
-    Serial.println("Can't find BMP388!");
+    Serial.println(F("Can't find BMP388!"));
     RGB_Light(RGB_PINS, YELLOW);
     while (1);
   }
 
   if (!sht31.begin(0x44)) {   
-    Serial.println("Can't find SHT31!");
+    Serial.println(F("Can't find SHT31!"));
     RGB_Light(RGB_PINS, YELLOW);
     while (1);
   }
@@ -80,6 +73,8 @@ void setup() {
   bmp.setPressureOversampling(BMP3_OVERSAMPLING_4X);
   bmp.setIIRFilterCoeff(BMP3_IIR_FILTER_COEFF_3);
   bmp.setOutputDataRate(BMP3_ODR_50_HZ);
+
+  play();
 }
 
 void loop() {
@@ -96,10 +91,8 @@ void loop() {
     }
 
   RGB_Light(RGB_PINS, GREEN);
-  delay(FIVE_SECONDS); // Change this to 5 sec
+  delay(FIVE_SECONDS); 
   RGB_Light(RGB_PINS, GREEN);
-
-  Serial.println(String(currentFileNum));
 }
 
 void Log_Serial(long currentMillis){
