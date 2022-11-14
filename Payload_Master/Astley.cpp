@@ -1,43 +1,35 @@
 /********************************************
-Modified version of a Git repo.
+ Modified version of a Git repo.
 
-Thanks whoever made this! I will defenietely 
-use it in the future.
+ Thanks to whoever made this! I will defenietely 
+ be using it in the future.
 
-https://github.com/robsoncouto/arduino-songs
+ https://github.com/robsoncouto/arduino-songs
 *********************************************/
 
 #include "Astley.h"
 
-// change this to make the song slower or faster
 int tempo = 114;
 
 // change this to whichever pin you want to use
 int buzzer = 11;
 
-// notes of the moledy followed by the duration.
+// notes of the melody followed by the duration.
 // a 4 means a quarter note, 8 an eighteenth , 16 sixteenth, so on
 // !!negative numbers are used to represent dotted notes,
 // so -4 means a dotted quarter note, that is, a quarter plus an eighteenth!!
 int melody[] = {
-
-  // Never Gonna Give You Up - Rick Astley
-  // Score available at https://musescore.com/chlorondria_5/never-gonna-give-you-up_alto-sax
-  // Arranged by Chlorondria
-   
-  NOTE_D5,2, NOTE_E5,8, NOTE_FS5,8, NOTE_D5,8, //13
-  NOTE_E5,8, NOTE_E5,8, NOTE_E5,8, NOTE_FS5,8, NOTE_E5,4, NOTE_A4,4,
-  REST,2, NOTE_B4,8, NOTE_CS5,8, NOTE_D5,8, NOTE_B4,8,
+  REST,2, NOTE_B4,8, NOTE_CS5,8, NOTE_D5,8, NOTE_B4,8, // 15th Measure
   REST,8, NOTE_E5,8, NOTE_FS5,8, NOTE_E5,-4, NOTE_A4,16, NOTE_B4,16, NOTE_D5,16, NOTE_B4,16,
   NOTE_FS5,-8, NOTE_FS5,-8, NOTE_E5,-4, NOTE_A4,16, NOTE_B4,16, NOTE_D5,16, NOTE_B4,16,
 
-  NOTE_E5,-8, NOTE_E5,-8, NOTE_D5,-8, NOTE_CS5,16, NOTE_B4,-8, NOTE_A4,16, NOTE_B4,16, NOTE_D5,16, NOTE_B4,16, //18
+  NOTE_E5,-8, NOTE_E5,-8, NOTE_D5,-8, NOTE_CS5,16, NOTE_B4,-8, NOTE_A4,16, NOTE_B4,16, NOTE_D5,16, NOTE_B4,16, // 18th measure
   NOTE_D5,4, NOTE_E5,8, NOTE_CS5,-8, NOTE_B4,16, NOTE_A4,8, NOTE_A4,8, NOTE_A4,8, 
   NOTE_E5,4, NOTE_D5,2, NOTE_A4,16, NOTE_B4,16, NOTE_D5,16, NOTE_B4,16,
   NOTE_FS5,-8, NOTE_FS5,-8, NOTE_E5,-4, NOTE_A4,16, NOTE_B4,16, NOTE_D5,16, NOTE_B4,16,
   NOTE_A5,4, NOTE_CS5,8, NOTE_D5,-8, NOTE_CS5,16, NOTE_B4,8, NOTE_A4,16, NOTE_B4,16, NOTE_D5,16, NOTE_B4,16,
 
-  NOTE_D5,4, NOTE_E5,8, NOTE_CS5,-8, NOTE_B4,16, NOTE_A4,4, NOTE_A4,8,  //23
+  NOTE_D5,4, NOTE_E5,8, NOTE_CS5,-8, NOTE_B4,16, NOTE_A4,4, NOTE_A4,8,  // 23rd Measure
   NOTE_E5,4, NOTE_D5,2, REST,4,
 };
 
@@ -51,7 +43,7 @@ int wholenote = (60000 * 4) / tempo;
 int divider = 0, noteDuration = 0;
 
 void play(){
-    // iterate over the notes of the melody.
+  // iterate over the notes of the melody.
   // Remember, the array is twice the number of notes (notes + durations)
   for (int thisNote = 0; thisNote < notes * 2; thisNote = thisNote + 2) {
 
