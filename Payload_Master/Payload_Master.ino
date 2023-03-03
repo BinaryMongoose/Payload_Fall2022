@@ -53,16 +53,41 @@ const int FIVE_SECONDS = ONE_SECOND * 5;
 const int ONE_MINUTE       = ONE_SECOND * 60; 
 const int FIVE_MINUTES = ONE_MINUTE * 5;
 
+<<<<<<< HEAD
 int fileInterval;
 int currentFileNum = 0;
 
 bool DEBUG = true;
+=======
+const long SECOND       = 1000;
+const long FIVE_SECONDS = SECOND*5;
+const long TEN_SECONDS  = SECOND*10;
+const long MINUTE       = SECOND*6; 
+const long FIVE_MINUTES = MINUTE*5;
+
+
+const long fileInterval = TEN_SECONDS;  // fileInterval at which to create a new file
+>>>>>>> parent of 461f85c (Finished bare bones.)
 
 void setup() {
   // Setting up Serial
   Serial.begin(115200);
 
+<<<<<<< HEAD
   // Setting up the BMP388
+=======
+  while (!Serial) {
+    ; // Wait for Serial port to connect
+  }
+
+  Serial.println("**********************");
+  Serial.println();
+
+  /**************************************************************************************
+  * You need to move both the BMP and SHT sensor setup to a differnt cpp file.
+  **************************************************************************************/
+
+>>>>>>> parent of 461f85c (Finished bare bones.)
   if (!bmp.begin_I2C(0x77)) {
     Serial.println(F("Can't find BMP388!"));
     RGB_Light(RGB_PINS, YELLOW);
@@ -83,9 +108,13 @@ void setup() {
     while(1);
   }
 
-  Serial.println("SD initialization done. (I did what I was supposed to!)");
+  Serial.println("initialization done. (I did what I was supposed to!)");
 
+<<<<<<< HEAD
   currentFile = SD.open("data_0.csv", FILE_WRITE); // The first file has been born.
+=======
+  currentFile = SD.open("data_0.txt", FILE_WRITE);
+>>>>>>> parent of 461f85c (Finished bare bones.)
 
   // Set up the RGD LED pins.
   for (int i = 0; i < 3; i++) {
@@ -109,6 +138,7 @@ void setup() {
   play();
 }
 
+int currentFileNum = 1;
 void loop() {
   /* Runs over and over again. Hence the name Loop. */
   unsigned long currentMillis = millis(); // 
@@ -116,6 +146,7 @@ void loop() {
     RGB_Light(RGB_PINS, RED);
   }
   
+<<<<<<< HEAD
   // If we are debugging log the serial. 
   if (DEBUG == true){
     Log_Serial(currentMillis);
@@ -142,6 +173,45 @@ void loop() {
 
   // Status indicator
   RGB_Light(RGB_PINS, GREEN);
+=======
+  Log_Serial(currentMillis);
+
+  // Current file printing
+  currentFile.print(currentMillis/1000);
+  currentFile.print(",");
+  currentFile.print(bmp.temperature);
+  currentFile.print(",");
+  currentFile.print(bmp.readAltitude(1013.25));
+  currentFile.print(",");
+  currentFile.print(sht31.readTemperature());
+  currentFile.print(",");
+  currentFile.println(sht31.readHumidity());
+
+
+  if (SD.begin(4)) {
+    if (currentMillis - previousMillis >= fileInterval) {
+      // save the last time we created a file.
+      previousMillis = currentMillis;
+
+      currentFile.close();
+      Serial.println("data file is closed.");
+
+      currentFile = SD.open("data_" + String(currentFileNum) + ".txt", FILE_WRITE);
+      Serial.println("data is open.");
+
+      currentFile.println("time,bmp_tmp,bmp_alt,sht_tmp,sht_hum");
+
+      currentFileNum += 1; // THis is important! Increments the file number.
+    }
+  } else {
+    Serial.println("Put the SD card in!");
+    RGB_Light(RGB_PINS, ORANGE);
+  }
+  
+  RGB_Light(RGB_PINS, GREEN);
+  delay(FIVE_SECONDS);
+  RGB_Light(RGB_PINS, GREEN);
+>>>>>>> parent of 461f85c (Finished bare bones.)
 }
 
 void Log_Serial(long currentMillis){
@@ -155,6 +225,7 @@ void Log_Serial(long currentMillis){
   Serial.print(F(","));
   Serial.println(sht31.readHumidity());     // Outside Humidity
 }
+<<<<<<< HEAD
 
 void Log_SD(long currentMillis){
   /** Logging the current file. **/
@@ -180,3 +251,5 @@ void Create_File(long currentMillis){
   currentFile.println("time,bmp_tmp,bmp_alt,sht_tmp,sht_hum"); // Create CSV header
   currentFileNum += 1; // Increment the file number.
 }
+=======
+>>>>>>> parent of 461f85c (Finished bare bones.)
