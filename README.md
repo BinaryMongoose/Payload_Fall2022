@@ -1,4 +1,7 @@
 # Payload
+
+⚠️ DO NOT USE THIS CODE. USE THE SOFTWARE FROM (SPRING 2023)[https://github.com/BinaryMongoose/Payload_Spring2023] ⚠️
+
 Code for an High Altitude Balloon Payload. 
 
 This is the software for CAC's High Altitude Balloon payload.
